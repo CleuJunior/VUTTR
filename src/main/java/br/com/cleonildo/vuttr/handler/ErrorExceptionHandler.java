@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.time.LocalDateTime;
-import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class ErrorExceptionHandler {
@@ -34,7 +33,7 @@ public class ErrorExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ExcpetionResponse> constraintErrosMessages(MethodArgumentNotValidException validException) {
 
-        var errorMessages = this.errorMessagesJoin(validException);
+        var errorMessages = this.getSingleMessageError(validException);
 
         var err = new ExcpetionResponse(
                 BAD_REQUEST.value(),
@@ -46,11 +45,11 @@ public class ErrorExceptionHandler {
         return ResponseEntity.badRequest().body(err);
     }
 
-    private String errorMessagesJoin(BindException exception){
-        return exception.getBindingResult()
-                .getAllErrors()
+    private String getSingleMessageError(BindException exception) {
+        return exception.getBindingResult().getAllErrors()
                 .stream()
+                .findFirst()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                .collect(Collectors.joining(", "));
+                .orElse("Unknown error");
     }
 }

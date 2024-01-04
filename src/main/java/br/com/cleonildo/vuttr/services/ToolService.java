@@ -3,6 +3,7 @@ package br.com.cleonildo.vuttr.services;
 import br.com.cleonildo.vuttr.dto.ToolRequest;
 import br.com.cleonildo.vuttr.dto.ToolResponse;
 import br.com.cleonildo.vuttr.entities.Tool;
+import br.com.cleonildo.vuttr.handler.excpetion.NotFoundException;
 import br.com.cleonildo.vuttr.repositories.ToolRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Objects;
 
+import static br.com.cleonildo.vuttr.handler.excpetion.NotFoundExcpetionMessageConstants.TOOL_NOT_FOUND;
 import static br.com.cleonildo.vuttr.log.LogConstants.TOOL_DELETED;
 import static br.com.cleonildo.vuttr.log.LogConstants.TOOL_FOUND_BY_TAG;
 import static br.com.cleonildo.vuttr.log.LogConstants.TOOL_ID_FOUND;
@@ -67,7 +69,7 @@ public class ToolService {
         var response = this.repository.findById(id)
                 .orElseThrow(() -> {
                     LOG.warn(TOOL_ID_NOT_FOUND, id);
-                    return new RuntimeException("Id not found!");
+                    return new NotFoundException(TOOL_NOT_FOUND);
                 });
 
         LOG.info(TOOL_ID_FOUND, id);
@@ -89,7 +91,7 @@ public class ToolService {
         var response = this.repository.findById(id)
                 .orElseThrow(() -> {
                     LOG.warn(TOOL_ID_NOT_FOUND, id);
-                    return new RuntimeException("Id not found!");
+                    return new NotFoundException(TOOL_NOT_FOUND);
                 });
 
         response.setTitle(request.title());
@@ -105,7 +107,7 @@ public class ToolService {
         var response = this.repository.findById(id)
                 .orElseThrow(() -> {
                     LOG.warn(TOOL_ID_NOT_FOUND, id);
-                    return new RuntimeException("Id not found!");
+                    return new NotFoundException(TOOL_NOT_FOUND);
                 });
 
         this.repository.delete(response);

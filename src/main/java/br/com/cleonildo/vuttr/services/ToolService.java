@@ -8,6 +8,7 @@ import br.com.cleonildo.vuttr.repositories.ToolRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
@@ -24,6 +25,7 @@ import static br.com.cleonildo.vuttr.log.LogConstants.TOOL_TAG_NOT_FOUD;
 import static br.com.cleonildo.vuttr.log.LogConstants.TOOL_UPDATE;
 
 @Service
+@Transactional
 public class ToolService {
     private static final Logger LOG = LoggerFactory.getLogger(ToolService.class);
     private final ToolRepository repository;
@@ -32,6 +34,7 @@ public class ToolService {
         this.repository = repository;
     }
 
+    @Transactional(readOnly = true)
     public List<ToolResponse> getAllTools() {
         var response = this.repository
                 .findAll()
@@ -49,6 +52,7 @@ public class ToolService {
         return response;
     }
 
+    @Transactional(readOnly = true)
     public List<ToolResponse> getAllToolsByTag(String tag) {
         var response = this.repository
                 .findByTagsContaining(tag)
@@ -65,6 +69,7 @@ public class ToolService {
         return response;
     }
 
+    @Transactional(readOnly = true)
     public ToolResponse getToolById(Integer id) {
         var response = this.repository.findById(id)
                 .orElseThrow(() -> {
@@ -87,6 +92,7 @@ public class ToolService {
         return new Tool(request.title(), request.link(), request.description(), request.tags());
     }
 
+    @Transactional(noRollbackFor = NotFoundException.class)
     public ToolResponse updateTool(Integer id, ToolRequest request) {
         var response = this.repository.findById(id)
                 .orElseThrow(() -> {
@@ -103,6 +109,7 @@ public class ToolService {
         return new ToolResponse(this.repository.save(response));
     }
 
+    @Transactional(noRollbackFor = NotFoundException.class)
     public void deleteToolById(Integer id) {
         var response = this.repository.findById(id)
                 .orElseThrow(() -> {

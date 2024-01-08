@@ -15,6 +15,9 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+/**
+ * Configuration class for Spring Security.
+ */
 @Configuration
 @EnableWebSecurity
 @EnableWebMvc
@@ -26,6 +29,12 @@ public class SecurityConfigurations {
         this.securityFilter = securityFilter;
     }
 
+    /**
+     * Configures the Spring Security HTTP security.
+     *
+     * @param httpSecurity the HTTP security builder
+     * @throws Exception if an error occurs
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
@@ -42,12 +51,24 @@ public class SecurityConfigurations {
                 .build();
     }
 
+    /**
+     * Provides the Spring Security authentication manager.
+     *
+     * @param authenticationConfiguration the authentication configuration
+     * @return the authentication manager
+     * @throws Exception if an error occurs
+     */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
             throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
+    /**
+     * Provides a password encoder for encoding passwords.
+     *
+     * @return the password encoder
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

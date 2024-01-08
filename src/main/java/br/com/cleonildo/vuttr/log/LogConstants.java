@@ -21,10 +21,15 @@ public class LogConstants {
     public static final String USER_LIST = "User list returned correctly";
     public static final String USER_ID_FOUND = "User with id {} found!";
     public static final String USER_ID_NOT_FOUND = "User with id {} not found!";
+    public static final String USERNAME_FOUND = "Username: {} found!";
+    public static final String USERNAME_NOT_FOUND = "Username {} not found!";
     public static final String USER_SAVED = "User saved successfully";
     public static final String USER_PASSWORD_DONT_MATCH = "Passwords don't match!";
     public static final String USER_UPDATE = "User information updated successfully";
     public static final String USER_DELETED = "User {} deleted successfully";
 
+
+    // TOKEN
+    public static final String TOKEN_GENERATION_ERROR = "Error while generating token";
 
 }

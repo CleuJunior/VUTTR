@@ -5,9 +5,13 @@ import br.com.cleonildo.vuttr.dto.UserResponse;
 import br.com.cleonildo.vuttr.entities.User;
 import br.com.cleonildo.vuttr.handler.excpetion.NotFoundException;
 import br.com.cleonildo.vuttr.handler.excpetion.PasswordDontMatchException;
+import br.com.cleonildo.vuttr.handler.constants.ExcpetionMessageConstants;
 import br.com.cleonildo.vuttr.repositories.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,7 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Objects;
 
-import static br.com.cleonildo.vuttr.handler.excpetion.constants.ExcpetionMessageConstants.USER_NOT_FOUND;
+import static br.com.cleonildo.vuttr.handler.constants.ExcpetionMessageConstants.USER_NOT_FOUND;
+import static br.com.cleonildo.vuttr.log.LogConstants.USERNAME_FOUND;
+import static br.com.cleonildo.vuttr.log.LogConstants.USERNAME_NOT_FOUND;
 import static br.com.cleonildo.vuttr.log.LogConstants.USER_DELETED;
 import static br.com.cleonildo.vuttr.log.LogConstants.USER_ID_FOUND;
 import static br.com.cleonildo.vuttr.log.LogConstants.USER_ID_NOT_FOUND;
@@ -27,7 +33,7 @@ import static br.com.cleonildo.vuttr.log.LogConstants.USER_UPDATE;
 
 @Service
 @Transactional
-public class UserService {
+public class UserService  implements UserDetailsService {
     private static final Logger LOG = LoggerFactory.getLogger(UserService.class);
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -64,6 +70,19 @@ public class UserService {
 
         LOG.info(USER_ID_FOUND, id);
         return new UserResponse(response);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        var user = this.userRepository
+                .findByUsername(username)
+                .orElseThrow(() -> {
+                    LOG.warn(USERNAME_NOT_FOUND, username);
+                    return new UsernameNotFoundException(USER_NOT_FOUND);
+                });
+
+        LOG.info(USERNAME_FOUND, username);
+        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), user.getAuthorities());
     }
 
     public UserResponse saveUser(UserRequest request) {
@@ -104,14 +123,14 @@ public class UserService {
     private void isPasswordsEquals(UserRequest request) {
         if (!request.password().equals(request.confirmPassword())) {
             LOG.warn(USER_PASSWORD_DONT_MATCH);
-            throw new PasswordDontMatchException(USER_PASSWORD_DONT_MATCH);
+            throw new PasswordDontMatchException(ExcpetionMessageConstants.USER_PASSWORD_DONT_MATCH);
         }
     }
 
     public void deleteUserById(Integer id) {
         var user = this.userRepository.findById(id).orElseThrow(() -> {
             LOG.warn(USER_ID_NOT_FOUND, id);
-            return new NotFoundException(USER_NOT_FOUND);
+            return new NotFoundException(ExcpetionMessageConstants.USER_NOT_FOUND);
         });
 
         LOG.info(USER_DELETED, user.getUsername());

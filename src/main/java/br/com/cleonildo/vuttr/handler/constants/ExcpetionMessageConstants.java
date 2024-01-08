@@ -1,4 +1,4 @@
-package br.com.cleonildo.vuttr.handler.excpetion.constants;
+package br.com.cleonildo.vuttr.handler.constants;
 
 public class ExcpetionMessageConstants {
 

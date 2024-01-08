@@ -7,7 +7,6 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -16,7 +15,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
+import java.util.StringJoiner;
 
 @Entity
 @Table(name = "users")
@@ -121,19 +120,19 @@ public class User  implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return true;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if(this.role == Role.ADMIN) {
             return List.of(
-                    new SimpleGrantedAuthority("ROLE_ADMIN"),
-                    new SimpleGrantedAuthority("ROLE_USER")
+                    new SimpleGrantedAuthority("ADMIN"),
+                    new SimpleGrantedAuthority("USER")
             );
         }
 
-        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        return List.of(new SimpleGrantedAuthority("USER"));
     }
 
     @Override
@@ -155,5 +154,19 @@ public class User  implements UserDetails {
     @Override
     public int hashCode() {
         return Objects.hash(getId(), getEmail(), getUsername(), getCpf());
+    }
+
+    @Override
+    public String toString() {
+        StringJoiner joiner = new StringJoiner(", ", "User{", "}");
+
+        joiner
+                .add("id=" + id)
+                .add("email='" + email + "'")
+                .add("username='" + username + "'")
+                .add("cpf='" + cpf + "'")
+                .add("role=" + role.getNameRole());
+
+        return joiner.toString();
     }
 }

@@ -1,4 +1,4 @@
-package br.com.cleonildo.vuttr.handler.excpetion;
+package br.com.cleonildo.vuttr.handler.responsehandler;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;

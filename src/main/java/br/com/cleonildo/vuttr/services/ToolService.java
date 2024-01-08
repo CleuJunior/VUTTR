@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Objects;
 
-import static br.com.cleonildo.vuttr.handler.excpetion.NotFoundExcpetionMessageConstants.TOOL_NOT_FOUND;
+import static br.com.cleonildo.vuttr.handler.constants.ExcpetionMessageConstants.TOOL_NOT_FOUND;
 import static br.com.cleonildo.vuttr.log.LogConstants.TOOL_DELETED;
 import static br.com.cleonildo.vuttr.log.LogConstants.TOOL_FOUND_BY_TAG;
 import static br.com.cleonildo.vuttr.log.LogConstants.TOOL_ID_FOUND;

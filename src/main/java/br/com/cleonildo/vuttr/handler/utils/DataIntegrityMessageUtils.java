@@ -1,4 +1,4 @@
-package br.com.cleonildo.vuttr.handler.excpetion.utils;
+package br.com.cleonildo.vuttr.handler.utils;
 
 /**
  * Utility class for handling data integrity exceptions.

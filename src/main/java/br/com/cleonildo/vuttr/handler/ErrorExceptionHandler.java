@@ -1,6 +1,6 @@
 package br.com.cleonildo.vuttr.handler;
 
-import br.com.cleonildo.vuttr.handler.excpetion.ExcpetionResponse;
+import br.com.cleonildo.vuttr.handler.responsehandler.ExcpetionResponse;
 import br.com.cleonildo.vuttr.handler.excpetion.NotFoundException;
 import br.com.cleonildo.vuttr.handler.excpetion.PasswordDontMatchException;
 import org.postgresql.util.PSQLException;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-import static br.com.cleonildo.vuttr.handler.excpetion.utils.DataIntegrityMessageUtils.getDataIntegrityMessage;
+import static br.com.cleonildo.vuttr.handler.utils.DataIntegrityMessageUtils.getDataIntegrityMessage;
 
 /**
  * This class handles all exceptions thrown by the controllers.

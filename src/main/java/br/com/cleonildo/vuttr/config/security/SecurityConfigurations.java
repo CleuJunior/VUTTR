@@ -23,6 +23,13 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @EnableWebMvc
 public class SecurityConfigurations {
 
+    private static final String[] WITHE_LIST = new String[]{
+            "/api/v1/auth/**",
+            "/v3/api-docs/**",
+            "/v3/api-docs.yml",
+            "/swagger-ui/**",
+            "/swagger-ui.html"
+    };
     private final SecurityFilter securityFilter;
 
     public SecurityConfigurations(SecurityFilter securityFilter) {
@@ -45,6 +52,7 @@ public class SecurityConfigurations {
                         .requestMatchers(HttpMethod.PUT, "/tools/{id}").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/auth").permitAll()
                         .requestMatchers(HttpMethod.POST, "/users").permitAll()
+                        .requestMatchers( WITHE_LIST).permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)

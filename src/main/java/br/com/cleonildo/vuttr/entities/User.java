@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -165,6 +166,7 @@ public class User  implements UserDetails {
                 .add("email='" + email + "'")
                 .add("username='" + username + "'")
                 .add("cpf='" + cpf + "'")
+                .add("password='[PROTECTED]")
                 .add("role=" + role.getNameRole());
 
         return joiner.toString();

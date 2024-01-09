@@ -6,11 +6,20 @@ import br.com.cleonildo.vuttr.services.ToolService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.OAuthFlow;
+import io.swagger.v3.oas.annotations.security.OAuthFlows;
+import io.swagger.v3.oas.annotations.security.OAuthScope;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import io.swagger.v3.oas.annotations.security.SecuritySchemes;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -28,7 +37,8 @@ import java.util.List;
 @Controller
 @RestController
 @RequestMapping(value = "/tools", produces = "application/json")
-@Tag(name = "vuttr")
+@Tag(name = "tools")
+@SecuritySchemes
 public class ToolController {
 
     private final ToolService service;
@@ -38,7 +48,11 @@ public class ToolController {
     }
 
     @GetMapping(value = "/{id}")
-    @Operation(summary = "Search data from a tool by id", method = "GET")
+    @Operation(
+            summary = "Search data from a tool by id",
+            method = "GET",
+            security = {@SecurityRequirement(name = "bearer-jwt")}
+    )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Search completed successfully"),
             @ApiResponse(responseCode = "404", description = "Not found")

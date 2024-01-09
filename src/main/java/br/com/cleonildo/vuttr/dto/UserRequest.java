@@ -1,5 +1,6 @@
 package br.com.cleonildo.vuttr.dto;
 
+
 import br.com.cleonildo.vuttr.entities.Role;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;
@@ -7,8 +8,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.hibernate.validator.constraints.br.CPF;
-
-import java.util.Set;
 
 public record UserRequest(
         @Email(message = "Email can't be blank")

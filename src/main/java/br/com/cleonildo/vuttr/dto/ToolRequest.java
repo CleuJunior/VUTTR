@@ -1,5 +1,6 @@
 package br.com.cleonildo.vuttr.dto;
 
+import br.com.cleonildo.vuttr.entities.Tool;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -23,5 +24,9 @@ public record ToolRequest(
         Set<@NotBlank(message = "Tag can't be blank") @NotNull(message = "Tag can't null.")
         @Size(min = 3, message = "Tag must have at least 3 characters.") String> tags
 
-) { }
+) {
+        public Tool toToolEntity() {
+                return new Tool(title, link, description, tags);
+        }
+}
 

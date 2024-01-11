@@ -71,34 +71,22 @@ public class ToolService {
 
     @Transactional(readOnly = true)
     public ToolResponse getToolById(Integer id) {
-        var response = this.repository.findById(id)
-                .orElseThrow(() -> {
-                    LOG.warn(TOOL_ID_NOT_FOUND, id);
-                    return new NotFoundException(TOOL_NOT_FOUND);
-                });
+        var response = this.getToolByIdOrThrow(id);
 
         LOG.info(TOOL_ID_FOUND, id);
         return new ToolResponse(response);
     }
 
     public ToolResponse saveTool(ToolRequest request) {
-        var response = this.repository.save(this.toolFromRequest(request));
+        var response = this.repository.save(request.toToolEntity());
 
         LOG.info(TOOL_SAVED);
         return new ToolResponse(response);
     }
 
-    private Tool toolFromRequest(ToolRequest request) {
-        return new Tool(request.title(), request.link(), request.description(), request.tags());
-    }
-
     @Transactional(noRollbackFor = NotFoundException.class)
     public ToolResponse updateTool(Integer id, ToolRequest request) {
-        var response = this.repository.findById(id)
-                .orElseThrow(() -> {
-                    LOG.warn(TOOL_ID_NOT_FOUND, id);
-                    return new NotFoundException(TOOL_NOT_FOUND);
-                });
+        var response = this.getToolByIdOrThrow(id);
 
         response.setTitle(request.title());
         response.setLink(request.link());
@@ -111,14 +99,17 @@ public class ToolService {
 
     @Transactional(noRollbackFor = NotFoundException.class)
     public void deleteToolById(Integer id) {
-        var response = this.repository.findById(id)
-                .orElseThrow(() -> {
-                    LOG.warn(TOOL_ID_NOT_FOUND, id);
-                    return new NotFoundException(TOOL_NOT_FOUND);
-                });
+        var response = this.getToolByIdOrThrow(id);
 
         this.repository.delete(response);
         LOG.info(TOOL_DELETED);
+    }
+
+    private Tool getToolByIdOrThrow(Integer id) {
+        return this.repository.findById(id).orElseThrow(() -> {
+            LOG.warn(TOOL_ID_NOT_FOUND, id);
+            return new NotFoundException(TOOL_NOT_FOUND);
+        });
     }
 
 }

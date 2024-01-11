@@ -1,5 +1,6 @@
 package br.com.cleonildo.vuttr.entities;
 
+import br.com.cleonildo.vuttr.dto.UserRequest;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -8,13 +9,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
 
@@ -126,14 +124,7 @@ public class User  implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if(this.role == Role.ADMIN) {
-            return List.of(
-                    new SimpleGrantedAuthority("ADMIN"),
-                    new SimpleGrantedAuthority("USER")
-            );
-        }
-
-        return List.of(new SimpleGrantedAuthority("USER"));
+        return this.role.getGrantedAuthorities();
     }
 
     @Override
@@ -167,7 +158,7 @@ public class User  implements UserDetails {
                 .add("username='" + username + "'")
                 .add("cpf='" + cpf + "'")
                 .add("password='[PROTECTED]")
-                .add("role=" + role.getNameRole());
+                .add("role=" + role);
 
         return joiner.toString();
     }

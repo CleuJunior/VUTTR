@@ -2,6 +2,7 @@ package br.com.cleonildo.vuttr.dto;
 
 
 import br.com.cleonildo.vuttr.entities.Role;
+import br.com.cleonildo.vuttr.entities.User;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -30,5 +31,15 @@ public record UserRequest(
         @NotNull(message = "Role list can't be null")
         Role role
 
-) { }
+) {
+        public User toUserEntity(String encodedPassword) {
+                return new User(
+                        email,
+                        username,
+                        cpf,
+                        encodedPassword,
+                        role
+                );
+        }
+}
 

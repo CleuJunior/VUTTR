@@ -62,11 +62,7 @@ public class UserService  implements UserDetailsService {
 
     @Transactional(readOnly = true)
     public UserResponse geUsersById(Integer id) {
-        var response = this.userRepository.findById(id).orElseThrow(() -> {
-            LOG.warn(USER_ID_NOT_FOUND, id);
-            return new RuntimeException(USER_NOT_FOUND);
-        });
-
+        var response = this.getUserByIdOrThrow(id);
 
         LOG.info(USER_ID_FOUND, id);
         return new UserResponse(response);
@@ -74,37 +70,33 @@ public class UserService  implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        var user = this.userRepository
-                .findByUsername(username)
-                .orElseThrow(() -> {
-                    LOG.warn(USERNAME_NOT_FOUND, username);
-                    return new UsernameNotFoundException(USER_NOT_FOUND);
-                });
+        var user = this.getUserByUsernameOrThrow(username);
 
         LOG.info(USERNAME_FOUND, username);
-        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), user.getAuthorities());
+        return user;
+    }
+
+    private UserDetails getUserByUsernameOrThrow(String username) {
+        return this.userRepository.findByUsername(username).orElseThrow(() -> {
+            LOG.warn(USERNAME_NOT_FOUND, username);
+            return new UsernameNotFoundException(USER_NOT_FOUND);
+        });
     }
 
     public UserResponse saveUser(UserRequest request) {
-        var response = this.userRepository.save(this.userFromRequest(request));
+        this.isPasswordsEquals(request);
+
+        var encodedPasswor = this.passwordEncoder.encode(request.password());
+
+        var response = this.userRepository.save(request.toUserEntity(encodedPasswor));
 
         LOG.info(USER_SAVED);
         return new UserResponse(response);
     }
 
-    private User userFromRequest(UserRequest request) {
-        this.isPasswordsEquals(request);
-
-        var encodedPasswor = this.passwordEncoder.encode(request.password());
-
-        return new User(request.email(), request.username(), request.cpf(),encodedPasswor, request.role());
-    }
 
     public UserResponse updateUser(Integer id, UserRequest request) {
-        var response = this.userRepository.findById(id).orElseThrow(() -> {
-            LOG.warn(USER_ID_NOT_FOUND, id);
-            return new NotFoundException(USER_NOT_FOUND);
-        });
+        var response = this.getUserByIdOrThrow(id);
 
         this.isPasswordsEquals(request);
 
@@ -120,6 +112,11 @@ public class UserService  implements UserDetailsService {
         return new UserResponse(response);
     }
 
+    /**
+     * Checks if the passwords entered by the user match. If they do not match, a PasswordDontMatchException is thrown.
+     *
+     * @param request the user's request to create or update a user
+     */
     private void isPasswordsEquals(UserRequest request) {
         if (!request.password().equals(request.confirmPassword())) {
             LOG.warn(USER_PASSWORD_DONT_MATCH);
@@ -128,13 +125,16 @@ public class UserService  implements UserDetailsService {
     }
 
     public void deleteUserById(Integer id) {
-        var user = this.userRepository.findById(id).orElseThrow(() -> {
-            LOG.warn(USER_ID_NOT_FOUND, id);
-            return new NotFoundException(ExcpetionMessageConstants.USER_NOT_FOUND);
-        });
+        var user = this.getUserByIdOrThrow(id);
 
         LOG.info(USER_DELETED, user.getUsername());
         this.userRepository.delete(user);
     }
 
+    private User getUserByIdOrThrow(Integer id) {
+        return this.userRepository.findById(id).orElseThrow(() -> {
+            LOG.warn(USER_ID_NOT_FOUND, id);
+            return new NotFoundException(ExcpetionMessageConstants.USER_NOT_FOUND);
+        });
+    }
 }
